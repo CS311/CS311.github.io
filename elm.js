@@ -6905,7 +6905,7 @@ Elm.App.make = function (_elm) {
       var _p7 = _p1._0;
       var _p6 = _p1._1;
       var dir3 = function () {    var _p2 = monster.dir;if (_p2.ctor === "Left") {    return "left";} else {    return "right";}}();
-      var verb3 = !_U.eq(monster.vx,0) ? "walk" : phil.isAttacking && (_U.cmp(phil.x,380) > 0 && _U.cmp(phil.x,420) < 0) ? "attk" : "stand";
+      var verb3 = !_U.eq(monster.vx,0) ? "walk" : phil.isAttacking && (_U.cmp(phil.x,370) > 0 && _U.cmp(phil.x,420) < 0) ? "attk" : "stand";
       var dir2 = function () {    var _p3 = damsel.dir;if (_p3.ctor === "Left") {    return "left";} else {    return "right";}}();
       var verb2 = !_U.eq(damsel.vx,0) ? "walk" : "stand";
       var dir = function () {    var _p4 = phil.dir;if (_p4.ctor === "Left") {    return "left";} else {    return "right";}}();

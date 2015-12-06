@@ -1,0 +1,107 @@
+Elm.App = Elm.App || {};
+Elm.App.make = function (_elm) {
+   "use strict";
+   _elm.App = _elm.App || {};
+   if (_elm.App.values) return _elm.App.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Graphics$Collage = Elm.Graphics.Collage.make(_elm),
+   $Graphics$Element = Elm.Graphics.Element.make(_elm),
+   $Keyboard = Elm.Keyboard.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Time = Elm.Time.make(_elm),
+   $Window = Elm.Window.make(_elm);
+   var _op = {};
+   var input = function () {
+      var delta = A2($Signal.map,function (t) {    return t / 20;},$Time.fps(30));
+      return A2($Signal.sampleOn,
+      delta,
+      A4($Signal.map3,F3(function (v0,v1,v2) {    return {ctor: "_Tuple3",_0: v0,_1: v1,_2: v2};}),delta,$Keyboard.arrows,$Keyboard.space));
+   }();
+   var physics = F2(function (dt,phil) {    return _U.update(phil,{x: phil.x + dt * phil.vx,y: A2($Basics.max,0,phil.y + dt * phil.vy)});});
+   var gravity = F2(function (dt,phil) {    return _U.update(phil,{vy: _U.cmp(phil.y,0) > 0 ? phil.vy - dt / 4 : 0});});
+   var hit = F2(function (spacebar,phil) {    return spacebar ? _U.update(phil,{isAttacking: true}) : _U.update(phil,{isAttacking: false});});
+   var jump = F2(function (keys,phil) {    return _U.cmp(keys.y,0) > 0 && _U.eq(phil.vy,0) ? _U.update(phil,{vy: 8.0}) : phil;});
+   var Keys = F2(function (a,b) {    return {x: a,y: b};});
+   var Right = {ctor: "Right"};
+   var phil = {x: -600,y: 0,vx: 0,vy: 0,dir: Right,isAttacking: false,health: 3};
+   var Left = {ctor: "Left"};
+   var monster = {x: 400,y: 0,vx: 0,vy: 0,dir: Left,isAttacking: false,health: 1};
+   var damsel = {x: 285,y: 85,vx: 0,vy: 0,dir: Left,isAttacking: false,health: 3};
+   var view = F2(function (_p0,phil) {
+      var _p1 = _p0;
+      var _p7 = _p1._0;
+      var _p6 = _p1._1;
+      var dir3 = function () {    var _p2 = monster.dir;if (_p2.ctor === "Left") {    return "left";} else {    return "right";}}();
+      var verb3 = !_U.eq(monster.vx,0) ? "walk" : phil.isAttacking && (_U.cmp(phil.x,370) > 0 && _U.cmp(phil.x,420) < 0) ? "attk" : "stand";
+      var dir2 = function () {    var _p3 = damsel.dir;if (_p3.ctor === "Left") {    return "left";} else {    return "right";}}();
+      var verb2 = !_U.eq(damsel.vx,0) ? "walk" : "stand";
+      var dir = function () {    var _p4 = phil.dir;if (_p4.ctor === "Left") {    return "left";} else {    return "right";}}();
+      var verb = _U.cmp(phil.y,0) > 0 ? "jump" : !_U.eq(phil.vx,0) ? "walk" : phil.isAttacking ? "attk" : "stand";
+      var src = _U.eq(verb,"stand") || _U.eq(verb,"jump") ? A2($Basics._op["++"],
+      "/imgs/hero/",
+      A2($Basics._op["++"],verb,A2($Basics._op["++"],"/",A2($Basics._op["++"],dir,".png")))) : A2($Basics._op["++"],
+      "/imgs/hero/",
+      A2($Basics._op["++"],verb,A2($Basics._op["++"],"/",A2($Basics._op["++"],dir,".gif"))));
+      var philImage = A3($Graphics$Element.image,34,44,src);
+      var src2 = _U.eq(verb2,"stand") ? A2($Basics._op["++"],
+      "/imgs/damsel/",
+      A2($Basics._op["++"],verb,A2($Basics._op["++"],"/",A2($Basics._op["++"],dir2,".png")))) : A2($Basics._op["++"],
+      "/imgs/damsel/",
+      A2($Basics._op["++"],verb,A2($Basics._op["++"],"/",A2($Basics._op["++"],dir2,".gif"))));
+      var damselImage = A3($Graphics$Element.image,34,44,src2);
+      var src3 = _U.eq(verb3,"stand") ? A2($Basics._op["++"],
+      "/imgs/enemy/",
+      A2($Basics._op["++"],verb,A2($Basics._op["++"],"/",A2($Basics._op["++"],dir3,".png")))) : A2($Basics._op["++"],
+      "/imgs/enemy/",
+      A2($Basics._op["++"],verb,A2($Basics._op["++"],"/",A2($Basics._op["++"],dir3,".gif"))));
+      var monsterImage = A3($Graphics$Element.image,84,94,src3);
+      var _p5 = {ctor: "_Tuple2",_0: $Basics.toFloat(_p7),_1: $Basics.toFloat(_p6)};
+      var w = _p5._0;
+      var h = _p5._1;
+      var groundY = _U.cmp(phil.x,30) > 0 && _U.cmp(phil.x,1000) < 0 ? 200 - h / 2 : _U.cmp(phil.x,-450) < 0 ? 200 - h / 2 : 175 - h / 2;
+      var position = {ctor: "_Tuple2",_0: phil.x,_1: phil.y + groundY};
+      var groundY2 = _U.cmp(damsel.x,30) > 0 && _U.cmp(damsel.x,1000) < 0 ? 225 - h / 2 : _U.cmp(damsel.x,-450) < 0 ? 200 - h / 2 : 175 - h / 2;
+      var position2 = {ctor: "_Tuple2",_0: damsel.x,_1: damsel.y + groundY2};
+      var position3 = {ctor: "_Tuple2",_0: monster.x,_1: monster.y + groundY2};
+      return A3($Graphics$Collage.collage,
+      _p7,
+      _p6,
+      _U.list([$Graphics$Collage.toForm(A3($Graphics$Element.image,_p7,_p6,"/imgs/beastlands2.png"))
+              ,A2($Graphics$Collage.move,position,$Graphics$Collage.toForm(philImage))
+              ,A2($Graphics$Collage.move,position2,$Graphics$Collage.toForm(damselImage))
+              ,A2($Graphics$Collage.move,position3,$Graphics$Collage.toForm(monsterImage))]));
+   });
+   var walk = F2(function (keys,phil) {
+      return _U.update(phil,{vx: 1.5 * $Basics.toFloat(keys.x),dir: _U.cmp(keys.x,0) < 0 ? Left : _U.cmp(keys.x,0) > 0 ? Right : phil.dir});
+   });
+   var update = F2(function (_p8,phil) {
+      var _p9 = _p8;
+      var _p11 = _p9._1;
+      var _p10 = _p9._0;
+      return A2(physics,_p10,A2(hit,_p9._2,A2(walk,_p11,A2(jump,_p11,A2(gravity,_p10,phil)))));
+   });
+   var main = A3($Signal.map2,view,$Window.dimensions,A3($Signal.foldp,update,phil,input));
+   var Model = F7(function (a,b,c,d,e,f,g) {    return {x: a,y: b,vx: c,vy: d,dir: e,isAttacking: f,health: g};});
+   return _elm.App.values = {_op: _op
+                            ,Model: Model
+                            ,Left: Left
+                            ,Right: Right
+                            ,Keys: Keys
+                            ,phil: phil
+                            ,monster: monster
+                            ,damsel: damsel
+                            ,update: update
+                            ,jump: jump
+                            ,hit: hit
+                            ,gravity: gravity
+                            ,physics: physics
+                            ,walk: walk
+                            ,view: view
+                            ,main: main
+                            ,input: input};
+};
